@@ -1,0 +1,14 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h1>
+    Flashcards!
+</h1>
+<ul>
+    {% for flashcard in flashcards %}
+    <li>{{ flashcard.question }} - {{ flashcard.answer }} (deck: {{ flashcard.deck.name }})</li>
+    {% empty %}
+    <li>No flashcards yet submitted!</li>
+    {% endfor %}
+</ul>
+{% endblock %}
