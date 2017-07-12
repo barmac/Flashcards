@@ -1,0 +1,28 @@
+{% extends 'main/base.html' %}
+{% block style %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/css/play.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% for flashcard in flashcards %}
+    <div class="flashcard">
+        <div class="question">
+            {{ flashcard.question }}
+        </div>
+        <div class="answer">
+            {{ flashcard.answer }}
+        </div>
+        <button class="btn btn-danger">Show</button>
+    </div>
+    {% empty %}
+    <h2>
+        No flashcards!
+    </h2>
+    {% endfor %}
+{% endblock %}
+
+{% block script %}
+    {% load static %}
+    <script src="{% static 'main/js/play.js' %}"></script>
+{% endblock %}

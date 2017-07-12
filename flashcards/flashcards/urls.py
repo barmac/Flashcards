@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from main.views import MainView, FlashcardsListView, DecksListView, AddFlashcardView, AddDeckView
+from main.views import MainView, FlashcardsListView, DecksListView, AddFlashcardView, AddDeckView, PlayView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^decks/$', DecksListView.as_view()),
     url(r'^decks/add/$', AddDeckView.as_view()),
     url(r'^flashcards/add/$', AddFlashcardView.as_view()),
+    url(r'^play/$', PlayView.as_view()),
 ]

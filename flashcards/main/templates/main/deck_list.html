@@ -8,7 +8,7 @@
     {% for deck in decks %}
     <li>{{ deck.name }} - {{ deck.user.username }}</li>
     <ul>
-        {% for flashcard in deck.flashcard_set.objects %}
+        {% for flashcard in deck.flashcard_set.all %}
         <li>{{ flashcard.question }} - {{ flashcard.answer }}</li>
         {% empty %}
         <li>No flashcards yet submitted!</li>

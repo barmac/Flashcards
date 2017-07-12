@@ -34,3 +34,10 @@ class AddDeckView(CreateView):
     model = Deck
     fields = '__all__'
     success_url = reverse_lazy('main')
+
+
+class PlayView(View):
+
+    def get(self, request):
+        ctx = {'flashcards': Flashcard.objects.all()}
+        return render(request, 'main/play.html', ctx)
