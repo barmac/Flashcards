@@ -8,5 +8,4 @@ $(document).ready(function () {
         $(this).parent().parent().find('[hidden]').show();
         $(this).hide();
     });
-    $('')
 });

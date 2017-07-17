@@ -1,10 +1,18 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<h1>
-    Hello, world!
-</h1>
-<h2>
-    <a href="/play">Play</a>
-</h2>
+    <div class="jumbotron">
+        <h1>
+            Flashcards
+        </h1>
+        <p>
+            Witaj w aplikacji Flashcards!
+        </p>
+        <p class="text-justify">
+            Po zalogowaniu się przez Facebooka możesz dodawać swoje własne słówka do nauki i uczyć się ich efektywnie dzięki algorytmowi Supermemo 2.
+        </p>
+    </div>
+    <div class="text-center">
+        <a href="/play"><button class="btn-lg btn-primary">Rozpocznij naukę!</button></a>
+    </div>
 {% endblock %}

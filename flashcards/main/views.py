@@ -1,4 +1,6 @@
 import datetime
+
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -23,14 +25,14 @@ class FlashcardsListView(ListView):
 
 class AddFlashcardView(CreateView):
     model = Flashcard
-    fields = ['question', 'answer', 'deck']
+    fields = ['question', 'answer']
     success_url = reverse_lazy('main')
 
 
 class PlayView(View):
 
     def get(self, request):
-        query = Flashcard.objects.filter(repeat__lte=datetime.datetime.now())
+        query = Flashcard.objects.filter(repeat__lte=datetime.datetime.now()).order_by('repeated')
         if query:
             return render(request, 'main/play.html', {'flashcard': query[0]})
         else:
@@ -55,7 +57,7 @@ class NewIntervalView(View):
                 else:
                     flashcard.interval = flashcard.interval * flashcard.ef
                 flashcard.ef = flashcard.ef + (0.1 - (5-grade)*(0.08 + (5-grade)*0.02))
-                flashcard.repeated = True
+        flashcard.repeated = True
 
         if grade == 5:
             flashcard.repeat = now().date() + datetime.timedelta(days=flashcard.interval)
