@@ -7,7 +7,7 @@ from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 
-from .models import Flashcard, Deck
+from .models import Flashcard
 
 
 class MainView(View):
@@ -21,20 +21,9 @@ class FlashcardsListView(ListView):
     context_object_name = 'flashcards'
 
 
-class DecksListView(ListView):
-    model = Deck
-    context_object_name = 'decks'
-
-
 class AddFlashcardView(CreateView):
     model = Flashcard
     fields = ['question', 'answer', 'deck']
-    success_url = reverse_lazy('main')
-
-
-class AddDeckView(CreateView):
-    model = Deck
-    fields = '__all__'
     success_url = reverse_lazy('main')
 
 
