@@ -6,7 +6,7 @@
 </h1>
 <ul>
     {% for flashcard in flashcards %}
-    <li>{{ flashcard.question }} - {{ flashcard.answer }} (deck: {{ flashcard.deck.name }})</li>
+    <li>{{ flashcard.question }} - {{ flashcard.answer }} (deck: {{ flashcard.deck.name }}); repeat: {{ flashcard.repeat }}</li>
     {% empty %}
     <li>No flashcards yet submitted!</li>
     {% endfor %}

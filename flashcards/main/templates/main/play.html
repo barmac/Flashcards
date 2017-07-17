@@ -5,8 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    {% for flashcard in flashcards %}
-    <div class="flashcard col-xs-12">
+    {% if flashcard %}
     <div class="jumbotron">
         <div class="row text-center">
             <div class="question col-xs-6">
@@ -21,23 +20,26 @@
             </div>
         </div>
     </div>
-        <div class="row text-center">
-            <div class="col-xs-4">
-                <button class="btn btn-danger">Nie umiem</button>
+    <div class="row text-center">
+        <div class="col-xs-4">
+            <div hidden>
+                <a href="/flashcard/{{ flashcard.id }}/0" class="btn btn-danger">Nie umiem</a>
             </div>
-            <div class="col-xs-4">
-                <button class="btn btn-info">Pokaż odpowiedź</button>
-            </div>
-            <div class="col-xs-4">
-                <button class="btn btn-success">Umiem</button>
+        </div>
+        <div class="col-xs-4">
+            <button class="btn btn-info">Pokaż odpowiedź</button>
+        </div>
+        <div class="col-xs-4">
+            <div hidden>
+                <a href="/flashcard/{{ flashcard.id }}/5" class="btn btn-success">Umiem</a>
             </div>
         </div>
     </div>
-    {% empty %}
+    {% else %}
     <h2>
-        No flashcards!
+        No more flashcards!
     </h2>
-    {% endfor %}
+    {% endif %}
 {% endblock %}
 
 {% block script %}
