@@ -17,7 +17,8 @@ class MainView(View):
 
     def get(self, request):
         if request.user.is_authenticated:
-            return render(request, "main/index.html", {'username': request.user.username})
+            username = " ".join([request.user.first_name, request.user.last_name])
+            return render(request, "main/index.html", {'username': username})
         else:
             return render(request, "main/index.html")
 
@@ -35,7 +36,8 @@ class FlashcardsView(LoginRequiredMixin, View):
         form = FlashcardForm()
         user = User.objects.get(username=request.user.get_username())
         flashcards = Flashcard.objects.filter(user=user)
-        ctx = {'flashcards': flashcards, 'form': form, 'username': request.user.username}
+        username = " ".join([request.user.first_name, request.user.last_name])
+        ctx = {'flashcards': flashcards, 'form': form, 'username': username}
         return render(request, 'main/flashcards.html', ctx)
 
     def post(self, request):
@@ -54,10 +56,11 @@ class PlayView(LoginRequiredMixin, View):
 
     def get(self, request):
         query = Flashcard.objects.filter(user=request.user, repeat__lte=datetime.datetime.now()).order_by('repeated')
+        username = " ".join([request.user.first_name, request.user.last_name])
         if query:
-            return render(request, 'main/play.html', {'flashcard': query[0], 'username': request.user.username})
+            return render(request, 'main/play.html', {'flashcard': query[0], 'username': username})
         else:
-            return render(request, 'main/play.html', {'username': request.user.username})
+            return render(request, 'main/play.html', {'username': username})
 
 
 class NewIntervalView(LoginRequiredMixin, View):
