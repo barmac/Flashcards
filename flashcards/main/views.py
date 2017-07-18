@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
@@ -15,7 +16,17 @@ from .models import Flashcard
 class MainView(View):
 
     def get(self, request):
-        return render(request, "main/index.html")
+        if request.user.is_authenticated:
+            return render(request, "main/index.html", {'username': request.user.username})
+        else:
+            return render(request, "main/index.html")
+
+
+class LogoutView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        logout(request)
+        return redirect('main')
 
 
 class FlashcardsView(LoginRequiredMixin, View):
@@ -24,21 +35,19 @@ class FlashcardsView(LoginRequiredMixin, View):
         form = FlashcardForm()
         user = User.objects.get(username=request.user.get_username())
         flashcards = Flashcard.objects.filter(user=user)
-        ctx = {'flashcards': flashcards, 'form': form}
+        ctx = {'flashcards': flashcards, 'form': form, 'username': request.user.username}
         return render(request, 'main/flashcards.html', ctx)
 
     def post(self, request):
         form = FlashcardForm(request.POST)
-        user = User.objects.get(username=request.user.get_username())
-        flashcards = Flashcard.objects.filter(user=user)
 
         if form.is_valid():
             flashcard = form.save(commit=False)
+            user = User.objects.get(username=request.user.get_username())
             flashcard.user = user
             flashcard.save()
 
-        ctx = {'flashcards': flashcards, 'form': form}
-        return render(request, 'main/flashcards.html', ctx)
+        return redirect('flashcards')
 
 
 class PlayView(LoginRequiredMixin, View):
@@ -46,9 +55,9 @@ class PlayView(LoginRequiredMixin, View):
     def get(self, request):
         query = Flashcard.objects.filter(user=request.user, repeat__lte=datetime.datetime.now()).order_by('repeated')
         if query:
-            return render(request, 'main/play.html', {'flashcard': query[0]})
+            return render(request, 'main/play.html', {'flashcard': query[0], 'username': request.user.username})
         else:
-            return render(request, 'main/play.html')
+            return render(request, 'main/play.html', {'username': request.user.username})
 
 
 class NewIntervalView(LoginRequiredMixin, View):
