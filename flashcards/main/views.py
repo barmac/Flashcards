@@ -1,6 +1,6 @@
 import datetime
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 
@@ -18,7 +18,7 @@ class MainView(View):
         return render(request, "main/index.html")
 
 
-class FlashcardsView(View):
+class FlashcardsView(LoginRequiredMixin, View):
 
     def get(self, request):
         form = FlashcardForm()
@@ -41,17 +41,17 @@ class FlashcardsView(View):
         return render(request, 'main/flashcards.html', ctx)
 
 
-class PlayView(View):
+class PlayView(LoginRequiredMixin, View):
 
     def get(self, request):
-        query = Flashcard.objects.filter(repeat__lte=datetime.datetime.now()).order_by('repeated')
+        query = Flashcard.objects.filter(user=request.user, repeat__lte=datetime.datetime.now()).order_by('repeated')
         if query:
             return render(request, 'main/play.html', {'flashcard': query[0]})
         else:
             return render(request, 'main/play.html')
 
 
-class NewIntervalView(View):
+class NewIntervalView(LoginRequiredMixin, View):
 
     """
     Implement Supermemo 2 algorithm (based on https://www.supermemo.com/english/ol/sm2.htm).

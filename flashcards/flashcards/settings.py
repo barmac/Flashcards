@@ -135,3 +135,6 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_FACEBOOK_KEY = '' # App ID
 SOCIAL_AUTH_FACEBOOK_SECRET = '' # App Secret
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email'] # facebook additional config
+
+LOGIN_URL = '/login/facebook'
+LOGIN_REDIRECT_URL = '/'
