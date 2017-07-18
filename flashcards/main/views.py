@@ -1,14 +1,14 @@
 import datetime
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.views import View
-from django.views.generic import ListView, CreateView
-from django.urls import reverse_lazy
 from django.utils.timezone import now
 
+from .forms import FlashcardForm
 from .models import Flashcard
 
 
@@ -18,15 +18,27 @@ class MainView(View):
         return render(request, "main/index.html")
 
 
-class FlashcardsListView(ListView):
-    model = Flashcard
-    context_object_name = 'flashcards'
+class FlashcardsView(View):
 
+    def get(self, request):
+        form = FlashcardForm()
+        user = User.objects.get(username=request.user.get_username())
+        flashcards = Flashcard.objects.filter(user=user)
+        ctx = {'flashcards': flashcards, 'form': form}
+        return render(request, 'main/flashcards.html', ctx)
 
-class AddFlashcardView(CreateView):
-    model = Flashcard
-    fields = ['question', 'answer']
-    success_url = reverse_lazy('main')
+    def post(self, request):
+        form = FlashcardForm(request.POST)
+        user = User.objects.get(username=request.user.get_username())
+        flashcards = Flashcard.objects.filter(user=user)
+
+        if form.is_valid():
+            flashcard = form.save(commit=False)
+            flashcard.user = user
+            flashcard.save()
+
+        ctx = {'flashcards': flashcards, 'form': form}
+        return render(request, 'main/flashcards.html', ctx)
 
 
 class PlayView(View):
