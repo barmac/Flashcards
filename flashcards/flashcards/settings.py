@@ -124,9 +124,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
+# Social media login
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'social_core.backends.facebook.FacebookOAuth2',
 )
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_FACEBOOK_KEY = '' # App ID
+SOCIAL_AUTH_FACEBOOK_SECRET = '' # App Secret
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email'] # facebook additional config
