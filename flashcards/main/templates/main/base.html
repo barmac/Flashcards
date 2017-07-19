@@ -15,8 +15,12 @@
         </div>
         <div class="navbar-right">
             {% if username %}
-                <span class="text-info">Zalogowano jako {{ username }}</span>
-                <a href="/logout"><button class="btn-sm btn-primary">Wyloguj</button></a>
+                <p class="text-info">
+                    Zalogowano jako {{ username }}
+                </p>
+                <p class="text-info">
+                    <a href="/profile">Ustawienia konta</a>
+                </p>
             {% else %}
                 <a href="/login/facebook"><button class="btn-sm btn-primary">Zaloguj</button></a>
             {% endif %}

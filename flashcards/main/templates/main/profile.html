@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h1>
+    Konto użytkownika {{ username }}
+</h1>
+<table class="table table-striped table-bordered table-hover">
+    <tr>
+        <th>Imię i nazwisko</th>
+        <td>{{ username }}</td>
+    </tr>
+    <tr>
+        <th>Liczba słówek</th>
+        <td>{{ count }}</td>
+    </tr>
+</table>
+{% endblock %}
+{% block script %}
+    {% load static %}
+    <script src="{% static 'main/js/profile.js' %}"></script>
+{% endblock %}

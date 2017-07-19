@@ -23,19 +23,12 @@ class MainView(View):
             return render(request, "main/index.html")
 
 
-class LogoutView(LoginRequiredMixin, View):
-
-    def get(self, request):
-        logout(request)
-        return redirect('main')
-
-
 class FlashcardsView(LoginRequiredMixin, View):
 
     def get(self, request):
         form = FlashcardForm()
         user = User.objects.get(username=request.user.get_username())
-        flashcards = Flashcard.objects.filter(user=user)
+        flashcards = Flashcard.objects.filter(user=user).order_by('interval')
         username = " ".join([request.user.first_name, request.user.last_name])
         ctx = {'flashcards': flashcards, 'form': form, 'username': username}
         return render(request, 'main/flashcards.html', ctx)
@@ -91,4 +84,12 @@ class NewIntervalView(LoginRequiredMixin, View):
 
         return redirect('play')
 
+
+class ProfileView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        username = " ".join([request.user.first_name, request.user.last_name])
+        count = Flashcard.objects.filter(user=request.user).count()
+        ctx = {'username': username, 'count': count}
+        return render(request, 'main/profile.html', ctx)
 
