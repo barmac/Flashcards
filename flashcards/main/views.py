@@ -3,6 +3,7 @@ import datetime
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -64,6 +65,11 @@ class NewIntervalView(LoginRequiredMixin, View):
 
     def get(self, request, id, grade):
         flashcard = Flashcard.objects.get(id=id)
+        user = request.user
+
+        if user != flashcard.user:
+            return HttpResponseForbidden()
+
         grade = int(grade)
         if grade < 3:
             flashcard.interval = 1
@@ -93,3 +99,15 @@ class ProfileView(LoginRequiredMixin, View):
         ctx = {'username': username, 'count': count}
         return render(request, 'main/profile.html', ctx)
 
+
+class FlashcardDeleteView(LoginRequiredMixin, View):
+
+    def get(self, request, id):
+        user = request.user
+        flashcard = Flashcard.objects.get(id=id)
+
+        if flashcard.user != user:
+            return HttpResponseForbidden()
+
+        flashcard.delete()
+        return redirect('flashcards')
