@@ -18,13 +18,14 @@
         <th>Pytanie</th>
         <th>Odpowiedź</th>
         <th>Dzień powtórki</th>
+        <th>Usuń</th>
     </tr>
     {% for flashcard in flashcards %}
     <tr>
         <td>{{ flashcard.question }}</td>
         <td>{{ flashcard.answer }}</td>
         <td>{{ flashcard.repeat|date:"d E Y" }}</td>
-        <td><a href="/flashcard/delete/{{ flashcard.id }}"></a><button class="btn-sm btn-danger">Usuń</button></td>
+        <td><a href="/flashcard/delete/{{ flashcard.id }}"><button class="btn-sm btn-danger">Usuń</button></a></td>
     </tr>
     {% empty %}
     <tr><td colspan="3">Nie dodano jeszcze fiszek</td></tr>

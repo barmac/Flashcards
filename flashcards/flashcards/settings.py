@@ -138,3 +138,8 @@ SOCIAL_AUTH_FACEBOOK_SCOPE = [] # facebook additional config
 
 LOGIN_URL = '/login/facebook'
 LOGIN_REDIRECT_URL = '/'
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
