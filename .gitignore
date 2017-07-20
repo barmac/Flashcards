@@ -105,3 +105,9 @@ ENV/
 
 # sqlite
 db.sqlite3
+
+# local settings
+local_settings.py
+
+# collected static
+flashcards/static/*
