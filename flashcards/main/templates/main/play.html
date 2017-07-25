@@ -8,12 +8,12 @@
     {% if flashcard %}
     <div class="jumbotron">
         <div class="row text-center">
-            <div class="question col-xs-6">
+            <div class="col-xs-6" id="question">
                 <h2>
                 {{ flashcard.question }}
                 </h2>
             </div>
-            <div class="answer col-xs-6" hidden>
+            <div class="col-xs-6 hidden" id="answer">
                 <h2>
                 {{ flashcard.answer }}
                 </h2>
@@ -21,18 +21,15 @@
         </div>
     </div>
     <div class="row text-center">
-        <div class="col-xs-4">
-            <div hidden>
-                <a href="/flashcard/{{ flashcard.id }}/0" class="btn btn-danger">Nie umiem</a>
+        <div class="col-xs-12">
+            <div class="hidden" id="grade">
+                <div class="btn-group">
+                    <a href="/flashcard/{{ flashcard.id }}/0" class="btn btn-md btn-danger">Nie umiem</a>
+                    <a href="/flashcard/{{ flashcard.id }}/3" class="btn btn-md btn-warning">Prawie umiem</a>
+                    <a href="/flashcard/{{ flashcard.id }}/5" class="btn btn-md btn-success">Umiem</a>
+                </div>
             </div>
-        </div>
-        <div class="col-xs-4">
-            <button class="btn btn-info">Pokaż odpowiedź</button>
-        </div>
-        <div class="col-xs-4">
-            <div hidden>
-                <a href="/flashcard/{{ flashcard.id }}/5" class="btn btn-success">Umiem</a>
-            </div>
+            <button class="btn btn-md btn-info" id="show-answer">Pokaż odpowiedź</button>
         </div>
     </div>
     {% else %}

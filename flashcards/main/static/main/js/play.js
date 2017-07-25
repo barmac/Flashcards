@@ -3,9 +3,8 @@
  */
 $(document).ready(function () {
     $('.btn-info').on('click', function () {
-        $(this).parent().parent().parent().find('.answer').show();
-        $(this).parent().parent().find('[hidden]').show();
-        $(this).parent().parent().find('[hidden]').show();
-        $(this).hide();
+        $('#answer').removeClass('hidden');
+        $('#grade').removeClass('hidden');
+        $(this).addClass('hidden');
     });
 });

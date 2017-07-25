@@ -1,6 +1,5 @@
 import datetime
 
-from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
@@ -29,7 +28,7 @@ class FlashcardsView(LoginRequiredMixin, View):
     def get(self, request):
         form = FlashcardForm()
         user = User.objects.get(username=request.user.get_username())
-        flashcards = Flashcard.objects.filter(user=user).order_by('interval')
+        flashcards = Flashcard.objects.filter(user=user).order_by('repeat')
         username = " ".join([request.user.first_name, request.user.last_name])
         ctx = {'flashcards': flashcards, 'form': form, 'username': username}
         return render(request, 'main/flashcards.html', ctx)
@@ -80,9 +79,11 @@ class NewIntervalView(LoginRequiredMixin, View):
                 else:
                     flashcard.interval = flashcard.interval * flashcard.ef
                 flashcard.ef = flashcard.ef + (0.1 - (5-grade)*(0.08 + (5-grade)*0.02))
+                if flashcard.ef < 1.3:
+                    flashcard.ef = 1.3
         flashcard.repeated = True
 
-        if grade == 5:
+        if grade >= 4:
             flashcard.repeat = now().date() + datetime.timedelta(days=flashcard.interval)
             flashcard.repeated = False
 
