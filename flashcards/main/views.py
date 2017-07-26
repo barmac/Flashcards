@@ -57,11 +57,9 @@ class PlayView(LoginRequiredMixin, View):
 
 
 class NewIntervalView(LoginRequiredMixin, View):
-
     """
     Implement Supermemo 2 algorithm (based on https://www.supermemo.com/english/ol/sm2.htm).
     """
-
     def get(self, request, id, grade):
         flashcard = Flashcard.objects.get(id=id)
         user = request.user
@@ -111,4 +109,26 @@ class FlashcardDeleteView(LoginRequiredMixin, View):
             return HttpResponseForbidden()
 
         flashcard.delete()
+        return redirect('flashcards')
+
+
+class FlashcardEditView(LoginRequiredMixin, View):
+
+    def get(self, request, id):
+        pass
+
+    def post(self, request, id):
+        user = request.user
+        flashcard = Flashcard.objects.get(id=id)
+
+        if flashcard.user != user:
+            return HttpResponseForbidden()
+
+        form = FlashcardForm(request.POST)
+
+        if form.is_valid():
+            flashcard.question = form.cleaned_data['question']
+            flashcard.answer = form.cleaned_data['answer']
+            flashcard.save()
+
         return redirect('flashcards')
