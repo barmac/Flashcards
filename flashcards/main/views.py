@@ -72,7 +72,9 @@ class NewIntervalView(LoginRequiredMixin, View):
             flashcard.interval = 1
         else:
             if not flashcard.repeated:
-                if flashcard.interval == 1:
+                if flashcard.interval == 0:
+                    flashcard.interval = 1
+                elif flashcard.interval == 1:
                     flashcard.interval = 6
                 else:
                     flashcard.interval = flashcard.interval * flashcard.ef
