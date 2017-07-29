@@ -15,9 +15,9 @@ $(document).ready(function () {
         $('#submit').text('Edytuj fiszkę');
     });
     $('.special-letter-btn').on('click', function (event) {
+       event.preventDefault();
        var btn = $(this);
        var input = btn.closest('.input').find('input');
        input.val(input.val() + btn.text());
-       return false;
     });
 });
