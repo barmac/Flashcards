@@ -3,10 +3,9 @@
  */
 $(document).ready(function () {
     $('.edit-btn').on('click', function (event) {
-        event.preventDefault();
-        var id = $(this).data('id');
-        var form = $('#form');
         var button = $(this);
+        var form = $('#form');
+        var id = button.data('id');
         var question = button.parent().parent().find('.question').text();
         var answer = button.parent().parent().find('.answer').text();
         form.attr('action', '/flashcard/edit/' + id + '/');
