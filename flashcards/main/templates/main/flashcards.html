@@ -13,7 +13,7 @@
                 <label for="id_question">{{ form.question.label }}:</label>
                 {{ form.question }}
             </p>
-            <div class="btn-group btn-group-sm">
+            <p class="btn-group btn-group-sm">
                 <button class="btn btn-basic special-letter-btn">Ä</button>
                 <button class="btn btn-basic special-letter-btn">ä</button>
                 <button class="btn btn-basic special-letter-btn">Ö</button>
@@ -21,14 +21,14 @@
                 <button class="btn btn-basic special-letter-btn">Ü</button>
                 <button class="btn btn-basic special-letter-btn">ü</button>
                 <button class="btn btn-basic special-letter-btn">ß</button>
-            </div>
+            </p>
         </div>
         <div class="input">
             <p>
                 <label for="id_answer">{{ form.answer.label }}:</label>
                 {{ form.answer }}
             </p>
-            <div class="btn-group btn-group-sm">
+            <p class="btn-group btn-group-sm">
                 <button class="btn btn-basic special-letter-btn">Ä</button>
                 <button class="btn btn-basic special-letter-btn">ä</button>
                 <button class="btn btn-basic special-letter-btn">Ö</button>
@@ -36,7 +36,7 @@
                 <button class="btn btn-basic special-letter-btn">Ü</button>
                 <button class="btn btn-basic special-letter-btn">ü</button>
                 <button class="btn btn-basic special-letter-btn">ß</button>
-            </div>
+            </p>
         </div>
         <p class="text-right">
             <button class="btn btn-lg btn-success" id="submit">Dodaj fiszkę</button>
@@ -45,11 +45,11 @@
 </div>
 <table class="table table-striped table-bordered table-hover">
     <tr>
-        <th>Pytanie</th>
-        <th>Odpowiedź</th>
-        <th>Dzień powtórki</th>
-        <th>Edytuj</th>
-        <th>Usuń</th>
+        <th class="col-xs-4 col-sm-4 col-md-4">Pytanie</th>
+        <th class="col-xs-4 col-sm-4 col-md-4">Odpowiedź</th>
+        <th class="col-xs-2 col-sm-2 col-md-2">Dzień powtórki</th>
+        <th class="col-md-1">Edytuj</th>
+        <th class="col-md-1">Usuń</th>
     </tr>
     {% for flashcard in flashcards %}
     <tr>
@@ -63,6 +63,27 @@
     <tr><td colspan="5" class="text-center">Nie dodano jeszcze fiszek</td></tr>
     {% endfor %}
 </table>
+<div class="row text-center">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-4">
+    {% if flashcards.has_previous %}
+        <a href="?page={{ flashcards.previous_page_number }}" class="btn btn-sm btn-primary"><<</a>
+    {% endif %}
+    </div>
+    <div class="col-xs-2">
+        Strona {{ flashcards.number }} z {{ flashcards.paginator.num_pages }}
+    </div>
+    <div class="col-xs-4">
+    {% if flashcards.has_next %}
+        <a href="?page={{ flashcards.next_page_number }}" class="btn btn-sm btn-primary">>></a>
+    {% endif %}
+    </div>
+    <div class="col-xs-1"></div>
+</div>
+<p>
+
+</p>
+
 {% endblock %}
 {% block script %}
 {% load static %}

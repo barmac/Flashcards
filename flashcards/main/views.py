@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
 
@@ -30,6 +31,16 @@ class FlashcardsView(LoginRequiredMixin, View):
         user = User.objects.get(username=request.user.get_username())
         flashcards = Flashcard.objects.filter(user=user).order_by('repeat')
         username = " ".join([request.user.first_name, request.user.last_name])
+        paginator = Paginator(flashcards, 15)
+
+        page = request.GET.get('page')
+        try :
+            flashcards = paginator.page(page)
+        except PageNotAnInteger:
+            flashcards = paginator.page(1)
+        except EmptyPage:
+            flashcards = paginator.page(paginator.num_pages)
+
         ctx = {'flashcards': flashcards, 'form': form, 'username': username}
         return render(request, 'main/flashcards.html', ctx)
 
