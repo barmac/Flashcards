@@ -33,7 +33,7 @@ class Language(models.Model):
 
 class Deck(models.Model):
     name = models.CharField(max_length=128, verbose_name="Nazwa")
-    desc = models.TextField(default="", verbose_name="Opis")
+    desc = models.CharField(default="", max_length=256, verbose_name="Opis")
     user = models.ForeignKey(User, verbose_name="Użytkownik")
     language = models.ForeignKey(Language, verbose_name="Język")
 

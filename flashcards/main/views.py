@@ -4,14 +4,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseForbidden
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 # Create your views here.
 from django.views import View
 from django.utils.timezone import now
 
-from .forms import FlashcardForm
-from .models import Flashcard
+from .forms import FlashcardForm, DeckForm
+from .models import Flashcard, Deck, Language
 
 
 class MainView(View):
@@ -26,11 +26,16 @@ class MainView(View):
 
 class FlashcardsView(LoginRequiredMixin, View):
 
-    def get(self, request):
+    def get(self, request, pk):
         form = FlashcardForm()
         user = User.objects.get(username=request.user.get_username())
-        flashcards = Flashcard.objects.filter(user=user).order_by('repeat')
-        username = " ".join([request.user.first_name, request.user.last_name])
+        deck = get_object_or_404(Deck, pk=pk)
+
+        if deck.user != user:
+            return HttpResponseForbidden()
+
+        flashcards = deck.flashcard_set.order_by('repeat')
+        username = " ".join([user.first_name, user.last_name])
         paginator = Paginator(flashcards, 15)
 
         page = request.GET.get('page')
@@ -41,41 +46,52 @@ class FlashcardsView(LoginRequiredMixin, View):
         except EmptyPage:
             flashcards = paginator.page(paginator.num_pages)
 
-        ctx = {'flashcards': flashcards, 'form': form, 'username': username}
+        ctx = {'flashcards': flashcards, 'form': form, 'username': username, 'deck': deck}
         return render(request, 'main/flashcards.html', ctx)
 
-    def post(self, request):
+    def post(self, request, pk):
         form = FlashcardForm(request.POST)
 
         if form.is_valid():
             flashcard = form.save(commit=False)
             user = User.objects.get(username=request.user.get_username())
-            flashcard.user = user
+            deck = get_object_or_404(Deck, pk=pk)
+
+            if deck.user != user:
+                return HttpResponseForbidden()
+
+            flashcard.deck = deck
             flashcard.save()
 
-        return redirect('flashcards')
+        return redirect('flashcards', pk)
 
 
 class PlayView(LoginRequiredMixin, View):
 
-    def get(self, request):
-        query = Flashcard.objects.filter(user=request.user, repeat__lte=datetime.datetime.now()).order_by('repeated')
-        username = " ".join([request.user.first_name, request.user.last_name])
-        if query:
-            return render(request, 'main/play.html', {'flashcard': query[0], 'username': username})
-        else:
-            return render(request, 'main/play.html', {'username': username})
+    def get(self, request, pk):
+        deck = get_object_or_404(Deck, pk=pk)
+        user = User.objects.get(username=request.user.get_username())
+
+        if deck.user != user:
+            return HttpResponseForbidden()
+
+        query = deck.flashcard_set.filter(repeat__lte=datetime.datetime.now()).order_by('repeated')
+        username = " ".join([user.first_name, user.last_name])
+        ctx = {'flashcard': query[0], 'username': username} if query else {'username': username}
+
+        return render(request, 'main/play.html', ctx)
 
 
 class NewIntervalView(LoginRequiredMixin, View):
     """
     Implement Supermemo 2 algorithm (based on https://www.supermemo.com/english/ol/sm2.htm).
     """
-    def get(self, request, id, grade):
-        flashcard = Flashcard.objects.get(id=id)
+    def get(self, request, pk, grade):
         user = request.user
+        flashcard = get_object_or_404(Flashcard, pk=pk)
+        deck = flashcard.deck
 
-        if user != flashcard.user:
+        if deck.user != user:
             return HttpResponseForbidden()
 
         grade = int(grade)
@@ -100,41 +116,54 @@ class NewIntervalView(LoginRequiredMixin, View):
 
         flashcard.save()
 
-        return redirect('play')
+        return redirect('play', deck.pk)
 
 
 class ProfileView(LoginRequiredMixin, View):
 
     def get(self, request):
         username = " ".join([request.user.first_name, request.user.last_name])
-        count = Flashcard.objects.filter(user=request.user).count()
+        count = sum([deck.flashcard_set.count() for deck in Deck.objects.filter(user=request.user)])
         ctx = {'username': username, 'count': count}
         return render(request, 'main/profile.html', ctx)
 
 
 class FlashcardDeleteView(LoginRequiredMixin, View):
 
-    def get(self, request, id):
+    def get(self, request, pk):
         user = request.user
-        flashcard = Flashcard.objects.get(id=id)
+        flashcard = get_object_or_404(Flashcard, pk=pk)
+        deck = flashcard.deck
 
-        if flashcard.user != user:
+        if deck.user != user:
             return HttpResponseForbidden()
 
         flashcard.delete()
-        return redirect('flashcards')
+        return redirect('flashcards', deck.pk)
 
 
 class FlashcardEditView(LoginRequiredMixin, View):
 
-    def get(self, request, id):
-        pass
-
-    def post(self, request, id):
+    def get(self, request, pk):
         user = request.user
-        flashcard = Flashcard.objects.get(id=id)
+        flashcard = get_object_or_404(Flashcard, pk=pk)
+        deck = flashcard.deck
 
-        if flashcard.user != user:
+        if deck.user != user:
+            return HttpResponseForbidden()
+
+        username = " ".join([user.first_name, user.last_name])
+        form = FlashcardForm(initial={'question': flashcard.question, 'answer': flashcard.answer, 'deck': flashcard.deck})
+        ctx = {'flashcard': flashcard, 'form': form, 'username': username, 'deck': deck}
+
+        return render(request, 'main/flashcard_edit.html', ctx)
+
+    def post(self, request, pk):
+        user = request.user
+        flashcard = Flashcard.objects.get(pk=pk)
+        deck = flashcard.deck
+
+        if deck.user != user:
             return HttpResponseForbidden()
 
         form = FlashcardForm(request.POST)
@@ -142,6 +171,30 @@ class FlashcardEditView(LoginRequiredMixin, View):
         if form.is_valid():
             flashcard.question = form.cleaned_data['question']
             flashcard.answer = form.cleaned_data['answer']
+            flashcard.deck = form.cleaned_data['deck']
             flashcard.save()
 
-        return redirect('flashcards')
+        return redirect('flashcards', deck.pk)
+
+
+class DeckChoiceView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        user = request.user
+        username = " ".join([user.first_name, user.last_name])
+        form = DeckForm()
+        ctx = {'decks': user.deck_set.all(), 'username': username, 'form': form}
+        return render(request, 'main/deck_choice.html', ctx)
+
+    def post(self, request):
+        form = DeckForm(request.POST)
+        user = request.user
+        username = " ".join([user.first_name, user.last_name])
+        ctx = {'decks': user.deck_set.all(), 'username': username, 'form': form}
+
+        if form.is_valid():
+            deck = form.save(commit=False)
+            deck.user = user
+            deck.save()
+
+        return render(request, 'main/deck_choice.html', ctx)

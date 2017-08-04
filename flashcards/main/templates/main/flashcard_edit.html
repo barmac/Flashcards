@@ -1,0 +1,54 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h1>
+    {{ deck.name }}
+</h1>
+<div class="row">
+    <div class="col-xs-12">
+        <form action="" method="post" id="form">
+            {% csrf_token %}
+            <div class="input">
+                <p>
+                    <label for="id_question">{{ form.question.label }}:</label>
+                    {{ form.question }}
+                </p>
+                {% if deck.language.special_characters %}
+                <p class="btn-group btn-group-sm">
+                    {% for char in deck.language.special_characters %}
+                    <button class="btn btn-basic special-letter-btn">{{ char }}</button>
+                    {% endfor %}
+                </p>
+                {% endif %}
+            </div>
+            <div class="input">
+                <p>
+                    <label for="id_answer">{{ form.answer.label }}:</label>
+                    {{ form.answer }}
+                </p>
+                {% if deck.language.special_characters %}
+                <p class="btn-group btn-group-sm">
+                    {% for char in deck.language.special_characters %}
+                    <button class="btn btn-basic special-letter-btn">{{ char }}</button>
+                    {% endfor %}
+                </p>
+                {% endif %}
+            </div>
+            <div>
+                <p>
+                    <label for="id_deck">{{ form.deck.label }}:</label>
+                    {{ form.deck }}
+                </p>
+            </div>
+            <p class="text-right">
+                <button class="btn btn-lg btn-success" id="submit">Edytuj fiszkę</button>
+            </p>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+{% block script %}
+{% load static %}
+<script src="{% static 'main/js/flashcards.js' %}"></script>
+{% endblock %}
