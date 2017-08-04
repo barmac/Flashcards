@@ -36,8 +36,13 @@
             </div>
             <div>
                 <p>
-                    <label for="id_deck">{{ form.deck.label }}:</label>
-                    {{ form.deck }}
+                    <label for="id_deck">Talia:</label>
+                    <select name="deck" required id="id_deck" class="form-control">
+                        <option value="">---------</option>
+                        {% for item in decks %}
+                        <option value="{{ item.pk }}"{% if item.pk == deck.pk %} selected{% endif %}>{{ item }}</option>
+                        {% endfor %}
+                    </select>
                 </p>
             </div>
             <p class="text-right">

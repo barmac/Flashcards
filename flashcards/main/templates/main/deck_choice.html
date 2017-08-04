@@ -16,7 +16,7 @@
             <tr>
                 <td>{{ deck.name }}</td>
                 <td>{{ deck.desc }}</td>
-                <td><a href="{{ deck.id }}/" class="btn btn-sm btn-primary">Wybierz</a></td>
+                <td><a href="/{{ current_view }}/{{ deck.id }}" class="btn btn-sm btn-primary">Wybierz</a></td>
             </tr>
             {% empty %}
             <tr><td colspan="3" class="text-center">Nie dodano jeszcze talii</td></tr>

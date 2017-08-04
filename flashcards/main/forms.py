@@ -7,7 +7,7 @@ class FlashcardForm(ModelForm):
 
     class Meta:
         model = Flashcard
-        exclude = ['repeat', 'repeated', 'interval', 'ef', 'type']
+        exclude = ['repeat', 'repeated', 'interval', 'ef', 'type', 'deck']
 
     def __init__(self, *args, **kwargs):
         super(FlashcardForm, self).__init__(*args, **kwargs)
