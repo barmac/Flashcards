@@ -4,6 +4,13 @@
 
 {% block content %}
     {% if flashcard %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h2>
+                Liczba fiszek do powtórki: {{ count }}
+            </h2>
+        </div>
+    </div>
     <div class="jumbotron">
         <div class="row text-center">
             <div class="col-xs-6" id="question">
