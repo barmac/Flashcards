@@ -1,4 +1,5 @@
 import datetime
+from random import randint
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -75,9 +76,9 @@ class PlayView(LoginRequiredMixin, View):
         if deck.user != user:
             return HttpResponseForbidden()
 
-        query = deck.flashcard_set.filter(repeat__lte=datetime.datetime.now()).order_by('repeated')
+        query = deck.flashcard_set.filter(repeat__lte=datetime.datetime.now())
         username = " ".join([user.first_name, user.last_name])
-        ctx = {'flashcard': query[0], 'count': query.count(), 'username': username} if query else {'username': username}
+        ctx = {'flashcard': query[randint(0, query.count()-1)], 'count': query.count(), 'username': username} if query else {'username': username}
 
         return render(request, 'main/play.html', ctx)
 
