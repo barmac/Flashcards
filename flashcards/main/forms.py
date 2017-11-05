@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 
-from .models import Flashcard, Deck
+from .models import Flashcard, Deck, Profile
 
 
 class FlashcardForm(ModelForm):
@@ -29,3 +29,10 @@ class DeckForm(ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+
+
+class ProfileForm(ModelForm):
+
+    class Meta:
+        model = Profile
+        exclude = ['user']

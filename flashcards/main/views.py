@@ -4,6 +4,7 @@ from random import randint
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.forms import model_to_dict
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -11,7 +12,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.utils.timezone import now
 
-from .forms import FlashcardForm, DeckForm
+from .forms import FlashcardForm, DeckForm, ProfileForm
 from .models import Flashcard, Deck, Language
 
 
@@ -125,8 +126,24 @@ class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
         username = " ".join([request.user.first_name, request.user.last_name])
         count = sum([deck.flashcard_set.count() for deck in Deck.objects.filter(user=request.user)])
-        ctx = {'username': username, 'count': count}
+        form = ProfileForm(initial=model_to_dict(request.user.profile))
+        ctx = {'username': username, 'count': count, 'form': form}
         return render(request, 'main/profile.html', ctx)
+
+    def post(self, request):
+        username = " ".join([request.user.first_name, request.user.last_name])
+        count = sum([deck.flashcard_set.count() for deck in Deck.objects.filter(user=request.user)])
+        form = ProfileForm(request.POST)
+        profile = request.user.profile
+        print(model_to_dict(profile))
+
+        if form.is_valid():
+            profile.session_limit = form.cleaned_data.get('session_limit', profile.session_limit)
+            profile.session_limit_count = form.cleaned_data.get('session_limit_count', profile.session_limit_count)
+            profile.save()
+
+        return redirect('profile')
+
 
 
 class FlashcardDeleteView(LoginRequiredMixin, View):
