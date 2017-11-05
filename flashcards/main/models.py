@@ -43,5 +43,5 @@ class Deck(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
-    daily_limit = models.BooleanField(default=False)
-    daily_limit_count = models.IntegerField(default=50)
+    session_limit = models.BooleanField(default=False, verbose_name="Włącz limit słówek")
+    session_limit_count = models.IntegerField(default=50, verbose_name="Liczba słówek na sesję")
