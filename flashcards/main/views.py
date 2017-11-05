@@ -79,7 +79,11 @@ class PlayView(LoginRequiredMixin, View):
 
         query = deck.flashcard_set.filter(repeat__lte=datetime.datetime.now())
         username = " ".join([user.first_name, user.last_name])
-        ctx = {'flashcard': query[randint(0, query.count()-1)], 'count': query.count(), 'username': username} if query else {'username': username}
+        ctx = {'username': username}
+
+        if query and not (user.profile.session_limit and request.session.get('limit', 0) < 1):
+            ctx['flashcard'] = query[randint(0, query.count()-1)]
+            ctx['count'] = request.session['limit']
 
         return render(request, 'main/play.html', ctx)
 
@@ -115,6 +119,8 @@ class NewIntervalView(LoginRequiredMixin, View):
         if grade >= 4:
             flashcard.repeat = now().date() + datetime.timedelta(days=flashcard.interval)
             flashcard.repeated = False
+            if user.profile.session_limit and request.session.get('limit'):
+                request.session['limit'] -= 1
 
         flashcard.save()
 
@@ -135,7 +141,6 @@ class ProfileView(LoginRequiredMixin, View):
         count = sum([deck.flashcard_set.count() for deck in Deck.objects.filter(user=request.user)])
         form = ProfileForm(request.POST)
         profile = request.user.profile
-        print(model_to_dict(profile))
 
         if form.is_valid():
             profile.session_limit = form.cleaned_data.get('session_limit', profile.session_limit)
@@ -207,6 +212,8 @@ class DeckChoiceView(LoginRequiredMixin, View):
         username = " ".join([user.first_name, user.last_name])
         form = DeckForm()
         ctx = {'decks': user.deck_set.all(), 'username': username, 'form': form, 'current_view': current_view}
+        if current_view == 'play' and user.profile.session_limit:
+            request.session['limit'] = user.profile.session_limit_count
         return render(request, 'main/deck_choice.html', ctx)
 
     def post(self, request, current_view):
