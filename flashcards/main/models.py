@@ -39,3 +39,9 @@ class Deck(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User)
+    daily_limit = models.BooleanField(default=False)
+    daily_limit_count = models.IntegerField(default=50)
