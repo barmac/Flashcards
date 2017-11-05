@@ -4,15 +4,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db import migrations, models
-from django.contrib.auth.models import User
 import django.db.models.deletion
-
-
-def create_profiles(apps, schemaeditor):
-    Profile = apps.get_model('main', 'Profile')
-    for user in User.objects.all():
-        profile = Profile.objects.create(user=user)
-        profile.save()
 
 class Migration(migrations.Migration):
 
@@ -30,6 +22,5 @@ class Migration(migrations.Migration):
                 ('daily_limit_count', models.IntegerField(default=50)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
-        ),
-        migrations.RunPython(create_profiles),
+        )
     ]
