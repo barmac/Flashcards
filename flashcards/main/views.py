@@ -81,9 +81,13 @@ class PlayView(LoginRequiredMixin, View):
         username = " ".join([user.first_name, user.last_name])
         ctx = {'username': username}
 
-        if query and not (user.profile.session_limit and request.session.get('limit', 0) < 1):
-            ctx['flashcard'] = query[randint(0, query.count()-1)]
-            ctx['count'] = request.session['limit']
+        if query:
+            if user.profile.session_limit and request.session.get('limit', 0) < 1:
+                ctx['flashcard'] = query[randint(0, query.count()-1)]
+                ctx['count'] = request.session['limit']
+            elif not user.profile.session_limit:
+                ctx['flashcard'] = query[randint(0, query.count() - 1)]
+                ctx['count'] = query.count()
 
         return render(request, 'main/play.html', ctx)
 
