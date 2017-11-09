@@ -82,7 +82,7 @@ class PlayView(LoginRequiredMixin, View):
         ctx = {'username': username}
 
         if query:
-            if user.profile.session_limit and request.session.get('limit', 0) < 1:
+            if user.profile.session_limit and request.session.get('limit', 0) > 0:
                 ctx['flashcard'] = query[randint(0, query.count()-1)]
                 ctx['count'] = request.session['limit']
             elif not user.profile.session_limit:
